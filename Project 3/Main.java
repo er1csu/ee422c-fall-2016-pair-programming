@@ -39,8 +39,10 @@ public class Main {
 		}
 		initialize();
 		//words = Main.parse(kb);
-		Set<String> stringSet = makeDictionary();
-		Set<Node> nodeSet = Node.convertToNodes(stringSet);
+		//Set<String> stringSet = ;
+		Set<Node> nodeSet = Node.convertToNodes(makeDictionary());
+		NodeMap.createNodeMap(nodeSet);
+		while(true);
 		// TODO methods to read in words, output ladder
 	}
 	

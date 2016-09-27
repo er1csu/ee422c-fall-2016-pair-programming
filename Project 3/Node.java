@@ -21,6 +21,7 @@ public class Node {
 
 	public Node(String word) {
 		this.word = word;
+		relatedNodes = new ArrayList<Node>();
 	}
 	
 	/**
@@ -29,11 +30,13 @@ public class Node {
 	 * @return
 	 */
 	public static Set<Node> convertToNodes(Set<String> dict) {
-		String[] stringArray = (String[]) dict.toArray();
+		String[] stringArray = new String[]{};
+		stringArray = dict.toArray(stringArray);
 		Set<Node> setOfNodes = new HashSet<Node>();
 		
 		for (int i = 0; i < dict.size(); i++) {
 			Node node = new Node(stringArray[i]);
+			//testing if the node was created
 			setOfNodes.add(node);
 		}
 		
