@@ -19,10 +19,10 @@ import java.io.*;
 
 public class Main {
 	
+	static ArrayList<String> wordLadder;
+	
 	// static variables and constants only here.
 	static ArrayList<String> words;
-	
-	// List of the 26 letters in alphabet
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -39,8 +39,8 @@ public class Main {
 		}
 		initialize();
 		words = Main.parse(kb);
-		getWordLadderBFS(words.get(0), words.get(1));
-
+		//getWordLadderBFS(words.get(0), words.get(1));
+		getWordLadderDFS(words.get(0), words.get(1));
 
 		// TODO methods to read in words, output ladder
 	}
@@ -49,7 +49,7 @@ public class Main {
 		// initialize your static variables or constants here.
 		// We will call this method before running our JUNIT tests.  So call it 
 		// only once at the start of main.
-		//words = new ArrayList<String>();
+		Main.wordLadder = new ArrayList<String>();
 	}
 	
 	/**
@@ -69,15 +69,42 @@ public class Main {
 		return wordsArray;
 	}
 	
+	/**
+	 * 
+	 * @param start Starting word
+	 * @param end Ending word
+	 * @return Word ladder 
+	 */
 	public static ArrayList<String> getWordLadderDFS(String start, String end) {
 		
 		// Returned list should be ordered start to end.  Include start and end.
 		// Return empty list if no ladder.
 		// TODO some code
 		Set<String> dict = makeDictionary();
-		// TODO more code
+		Set<Node> nodeSet = Node.convertToNodes(dict);
+		NodeMap.createNodeMap(nodeSet);
+		Node[] nodeArray = new Node[] {};
+		nodeArray = nodeSet.toArray(nodeArray);
+		int startIndex = 0; 
 		
-		return null; // replace this line later with real return
+		for (int i = 0; i < nodeArray.length; i++) {
+			if (nodeArray[i].word.equals(start)) {
+				startIndex = i; 
+				break; 
+			}
+		}
+		
+		Node startNode = nodeArray[startIndex];
+		
+		boolean ladderExists = doDFS(startNode, end, nodeArray);
+		
+		if (ladderExists == true) {
+			return Main.wordLadder;
+		}
+		else {
+			Main.wordLadder.clear();
+			return Main.wordLadder;
+		}		
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
@@ -162,5 +189,39 @@ public class Main {
 	}
 	// TODO
 	// Other private static methods here
-
+	
+	/**
+	 * 
+	 * @param startNode The starting node
+	 * @param end The string we wish to create a ladder
+	 * @param nodeArray Array of nodes to traverse
+	 * @return Boolean whether a ladder could be made
+	 */
+	private static boolean doDFS(Node startNode, String end, Node[] nodeArray) {
+		if (startNode == null) {
+			return false;
+		}
+		// Mark visited
+		startNode.isMarked = 1;
+		
+		if (startNode.word.equals(end)) {
+			Main.wordLadder.add(startNode.word);
+			return true;
+		} 
+		else {
+			// Add the word to the ladder
+			Main.wordLadder.add(startNode.word);
+			int i;
+			for (i = 0; i < startNode.relatedNodes.size(); i++) {
+				if (startNode.relatedNodes.get(i).isMarked == 0) {
+					boolean found = doDFS(startNode.relatedNodes.get(i), end, nodeArray);
+					if (found == true) {
+						return true;
+					}
+				}				
+			}
+			Main.wordLadder.remove(startNode.relatedNodes.get(i));
+			return false;
+		}
+	}
 }
