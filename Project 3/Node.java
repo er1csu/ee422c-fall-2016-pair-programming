@@ -15,9 +15,9 @@ import java.util.Set;
  */
 public class Node {
 	String word; 
-	boolean isMarked = false;
-	int numOfChildren = 0;
+	int isMarked = 0;//0 = white, 1 = gray, 2 = black
 	ArrayList<Node> relatedNodes;	// List of 1-letter away nodes
+	Node parent;
 
 	public Node(String word) {
 		this.word = word;
