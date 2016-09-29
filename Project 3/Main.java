@@ -38,11 +38,10 @@ public class Main {
 			ps = System.out;			// default to Stdout			
 		}
 		initialize();
-		//words = Main.parse(kb);
-		//Set<String> stringSet = ;
-		Set<Node> nodeSet = Node.convertToNodes(makeDictionary());
-		NodeMap.createNodeMap(nodeSet);
-		while(true);
+		words = Main.parse(kb);
+		getWordLadderBFS(words.get(0), words.get(1));
+
+
 		// TODO methods to read in words, output ladder
 	}
 	
@@ -82,19 +81,71 @@ public class Main {
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-		
+    	ArrayList<String> path = new ArrayList<String>();
+		int startIndex = 0;
 		// TODO some code
 		Set<String> dict = makeDictionary();
-		// TODO more code
+		Set<Node> nodeSet = Node.convertToNodes(makeDictionary());
+		NodeMap.createNodeMap(nodeSet);
+		Node[] nodeArray = new Node[]{};
+		nodeArray = nodeSet.toArray(nodeArray);
+		for(int i = 0; i < nodeArray.length ; i++)
+		{
+			if(nodeArray[i].word.equals(start))
+			{
+				startIndex = i;
+				break;
+			}
+		}
+		Queue<Node> queue = new LinkedList<>();
+		ArrayList<Node> nodeArrayList = new ArrayList<Node>(Arrays.asList(nodeArray));
+		queue.add(nodeArrayList.get(startIndex));
 		
-		return null; // replace this line later with real return
+		
+		int printTimes = 1;
+		while(queue.size() != 0)
+		{
+			Node head = queue.peek();
+			int size = head.relatedNodes.size();
+			if (head.word.equals(end))
+			{
+				path.add(head.word);
+				return path;
+			}
+			if(head.isMarked == 2)
+			{
+				queue.poll();
+			}
+			else
+			{
+				head.isMarked = 2;
+				for(int i = 0; i < size; i++)
+				{
+					if(head.relatedNodes.get(i).isMarked != 1 && head.relatedNodes.get(i).isMarked != 2)
+					{
+							if(printTimes == 1)
+							path.add(head.word);
+							printTimes = 0;
+							queue.add(head.relatedNodes.get(i));
+							head.relatedNodes.get(i).isMarked = 1;					
+						
+					}
+				}
+				printTimes = 1;
+			}
+		}
+		
+		
+		// TODO more code
+		path.clear();
+		return path;
 	}
     
 	public static Set<String>  makeDictionary () {
 		Set<String> words = new HashSet<String>();
 		Scanner infile = null;
 		try {
-			infile = new Scanner (new File("five_letter_words.txt"));
+			infile = new Scanner (new File("short_dict.txt"));
 		} catch (FileNotFoundException e) {
 			System.out.println("Dictionary File not Found!");
 			e.printStackTrace();
@@ -111,4 +162,5 @@ public class Main {
 	}
 	// TODO
 	// Other private static methods here
+
 }
