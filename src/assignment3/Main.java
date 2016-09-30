@@ -79,7 +79,6 @@ public class Main {
 		
 		// Returned list should be ordered start to end.  Include start and end.
 		// Return empty list if no ladder.
-		// TODO some code
 		Set<String> dict = makeDictionary();
 		Set<Node> nodeSet = Node.convertToNodes(dict);
 		NodeMap.createNodeMap(nodeSet);
@@ -129,7 +128,7 @@ public class Main {
 		queue.add(nodeArrayList.get(startIndex));
 		
 		
-		int printTimes = 1;
+
 		while(queue.size() != 0)
 		{
 			Node head = queue.peek();
@@ -137,7 +136,11 @@ public class Main {
 			if (head.word.equals(end))
 			{
 				path.add(head.word);
-				cleanPath(path);
+				while(head.parent != null)
+				{
+					path.add(head.parent.word);
+					head = head.parent;
+				}
 				return path;
 			}
 			if(head.isMarked == 2)
@@ -151,18 +154,16 @@ public class Main {
 				{
 					if(head.relatedNodes.get(i).isMarked != 1 && head.relatedNodes.get(i).isMarked != 2)
 					{
-							if(printTimes == 1)
-							path.add(head.word);
-							printTimes = 0;
+							head.relatedNodes.get(i).parent = head;
+							head.relatedNodes.get(i).isMarked = 1;
 							queue.add(head.relatedNodes.get(i));
-							head.relatedNodes.get(i).isMarked = 1;					
 						
 					}
 				}
-				printTimes = 1;
+
 			}
 		}
-		
+
 		
 		// TODO more code
 		path.clear();
@@ -224,17 +225,19 @@ public class Main {
 		} 
 		else {
 			// Add the word to the ladder
-			Main.wordLadder.add(startNode.word);
+			// Main.wordLadder.add(startNode.word);
 			int i;
 			for (i = 0; i < startNode.relatedNodes.size(); i++) {
-				if (startNode.relatedNodes.get(i).isMarked == 0) {
-					boolean found = doDFS(startNode.relatedNodes.get(i), end, nodeArray);
+				Node neighbor = startNode.relatedNodes.get(i);
+				if (neighbor.isMarked == 0) {
+					boolean found = doDFS(neighbor, end, nodeArray);
 					if (found == true) {
+						Main.wordLadder.add(startNode.word);
 						return true;
 					}
 				}				
 			}
-			Main.wordLadder.remove(startNode.relatedNodes.get(i));
+			//Main.wordLadder.remove(Main.wordLadder.size() - 1);
 			return false;
 		}
 	}
