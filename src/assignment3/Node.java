@@ -1,5 +1,17 @@
 // Node.java
-
+/* WORD LADDER Main.java
+ * EE422C Project 3 submission by
+ * Replace <...> with your actual data.
+ * Eric Su
+ * es25725
+ * 16475
+ * Brian Madina
+ * bjm3348
+ * 16460
+ * Slip days used: <1>
+ * Git URL: https://github.com/er1csu/ee422c-fall-2016-pair-programming
+ * Fall 2016
+ */
 
 package assignment3;
 
@@ -27,7 +39,7 @@ public class Node {
 	/**
 	 * Convert a set of Strings to a set of Nodes
 	 * @param dict
-	 * @return
+	 * @return Set of Nodes
 	 */
 	public static Set<Node> convertToNodes(Set<String> dict) {
 		String[] stringArray = new String[]{};

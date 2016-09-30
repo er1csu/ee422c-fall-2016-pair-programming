@@ -1,14 +1,14 @@
+// Main.java
 /* WORD LADDER Main.java
  * EE422C Project 3 submission by
- * Replace <...> with your actual data.
  * Eric Su
  * es25725
  * 16475
  * Brian Madina
- * <Student2 EID>
- * <Student2 5-digit Unique No.>
- * Slip days used: <0>
- * Git URL: 
+ * bjm3348
+ * 16460
+ * Slip days used: <1>
+ * Git URL: https://github.com/er1csu/ee422c-fall-2016-pair-programming
  * Fall 2016
  */
 
@@ -20,8 +20,6 @@ import java.io.*;
 public class Main {
 	
 	static ArrayList<String> wordLadder;
-	
-	// static variables and constants only here.
 	static ArrayList<String> words;
 	
 	public static void main(String[] args) throws Exception {
@@ -39,18 +37,28 @@ public class Main {
 		}
 		initialize();
 		words = Main.parse(kb);
-		//getWordLadderBFS(words.get(0), words.get(1));
-		getWordLadderDFS(words.get(0), words.get(1));
-
-		// TODO methods to read in words, output ladder
+		for (int i = 0; i < words.size(); i++) {
+			words.set(i, words.get(i).toUpperCase());
+		}
+		ArrayList<String> wordLadder1 = getWordLadderBFS(words.get(0), words.get(1));
+		ArrayList<String> wordLadder2 = getWordLadderBFS(words.get(0), words.get(1));
+		wordLadder1 = getWordLadderBFS(words.get(0), words.get(1));
+		//wordLadder2 = getWordLadderDFS(words.get(0), words.get(1));
+		
+		Main.printLadder(wordLadder1);
+		Main.printLadder(wordLadder2);
 	}
 	
+	/**
+	 * Initialize some static variables.
+	 */
 	public static void initialize() {
 		// initialize your static variables or constants here.
 		// We will call this method before running our JUNIT tests.  So call it 
 		// only once at the start of main.
 		Main.wordLadder = new ArrayList<String>();
 	}
+
 	
 	/**
 	 * @param keyboard Scanner connected to System.in
@@ -62,6 +70,9 @@ public class Main {
 		String [] splitWords = words.split(" ");
 		String word1 = splitWords[0];		
 		String word2 = splitWords[1];
+		if (word1.equals("quit") || word2.equals("quit")) {
+			System.exit(0);
+		}
 		ArrayList<String> wordsArray = new ArrayList<String>();
 		wordsArray.add(0, word1);
 		wordsArray.add(1, word2);
@@ -106,10 +117,15 @@ public class Main {
 		}		
 	}
 	
+	/**
+	 * Search for a word ladder using a BFS method. 
+	 * @param start The starting word
+	 * @param end The ending word
+	 * @return Word ladder
+	 */
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
     	ArrayList<String> path = new ArrayList<String>();
 		int startIndex = 0;
-		// TODO some code
 		Set<String> dict = makeDictionary();
 		Set<Node> nodeSet = Node.convertToNodes(makeDictionary());
 		NodeMap.createNodeMap(nodeSet);
@@ -127,8 +143,6 @@ public class Main {
 		ArrayList<Node> nodeArrayList = new ArrayList<Node>(Arrays.asList(nodeArray));
 		queue.add(nodeArrayList.get(startIndex));
 		
-		
-
 		while(queue.size() != 0)
 		{
 			Node head = queue.peek();
@@ -160,12 +174,9 @@ public class Main {
 						
 					}
 				}
-
 			}
 		}
 
-		
-		// TODO more code
 		path.clear();
 		return path;
 	}
@@ -183,6 +194,10 @@ public class Main {
     	}
     }
     
+    /**
+     * Create a dictionary that can be used for our searches.
+     * @return Set of words in the dictionary.
+     */
 	public static Set<String>  makeDictionary () {
 		Set<String> words = new HashSet<String>();
 		Scanner infile = null;
@@ -199,11 +214,23 @@ public class Main {
 		return words;
 	}
 	
+	/**
+	 * Print the word latter. Recognizes 'quit' as termination.
+	 * @param ladder The word ladder to be printed. 
+	 */
 	public static void printLadder(ArrayList<String> ladder) {
+		int length = ladder.size();
+		if (length == 0) {
+			System.out.println("no word ladder can be found between " + Main.words.get(0) + " and " + Main.words.get(1) + ".");
+			return;
+		}
+		String message = "a " + length + "-rung word ladder exists between " + Main.words.get(0) + " and " + Main.words.get(1); 
+		System.out.println(message);
 		
+		for (int i = ladder.size() - 1; i >=0; i--) {
+			System.out.println(ladder.get(i));
+		}
 	}
-	// TODO
-	// Other private static methods here
 	
 	/**
 	 * 
@@ -222,10 +249,9 @@ public class Main {
 		if (startNode.word.equals(end)) {
 			Main.wordLadder.add(startNode.word);
 			return true;
-		} 
+		}
 		else {
 			// Add the word to the ladder
-			// Main.wordLadder.add(startNode.word);
 			int i;
 			for (i = 0; i < startNode.relatedNodes.size(); i++) {
 				Node neighbor = startNode.relatedNodes.get(i);
@@ -237,7 +263,6 @@ public class Main {
 					}
 				}				
 			}
-			//Main.wordLadder.remove(Main.wordLadder.size() - 1);
 			return false;
 		}
 	}
