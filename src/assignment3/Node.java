@@ -14,7 +14,7 @@ import java.util.Set;
  *
  */
 public class Node {
-	String word; 
+	String word;
 	int isMarked = 0;//0 = white, 1 = gray, 2 = black
 	ArrayList<Node> relatedNodes;	// List of 1-letter away nodes
 	Node parent;
