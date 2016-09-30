@@ -137,6 +137,7 @@ public class Main {
 			if (head.word.equals(end))
 			{
 				path.add(head.word);
+				cleanPath(path);
 				return path;
 			}
 			if(head.isMarked == 2)
@@ -168,11 +169,24 @@ public class Main {
 		return path;
 	}
     
+    /**
+     * Clean up the path for BFS elements not connected.
+     * @param path Path to be cleaned
+     */
+    public static void cleanPath(ArrayList<String> path) {
+    	for (int i = 1; i < path.size(); i++) {
+    		if (NodeMap.isStringRelated(path.get(i), path.get(i-1))==false){
+    			path.remove(i-1);
+    			i--;
+    		}
+    	}
+    }
+    
 	public static Set<String>  makeDictionary () {
 		Set<String> words = new HashSet<String>();
 		Scanner infile = null;
 		try {
-			infile = new Scanner (new File("short_dict.txt"));
+			infile = new Scanner (new File("five_letter_words.txt"));
 		} catch (FileNotFoundException e) {
 			System.out.println("Dictionary File not Found!");
 			e.printStackTrace();

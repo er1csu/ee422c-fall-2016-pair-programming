@@ -50,6 +50,20 @@ public class NodeMap {
 		{return true;}
 		else{return false;}
 	}
-
 	
+	public static boolean isStringRelated(String i, String j) {
+		int differentLetters = 0;
+		String[] tempI = i.split("");
+		String[] tempJ = j.split("");
+		for(int x = 0; x < tempI.length; x++)
+		{
+			if(!tempI[x].equals(tempJ[x]))
+			{
+				differentLetters++;
+			}
+		}
+		if(differentLetters == 1)
+		{return true;}
+		else{return false;}
+	}	
 }
