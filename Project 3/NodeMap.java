@@ -13,7 +13,6 @@ import java.util.Set;
  *
  */
 public class NodeMap {
-	//static String[] LetterList = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
 	static Node[] nodeArray = new Node[]{};
 	
 	
@@ -51,6 +50,20 @@ public class NodeMap {
 		{return true;}
 		else{return false;}
 	}
-
 	
+	public static boolean isStringRelated(String i, String j) {
+		int differentLetters = 0;
+		String[] tempI = i.split("");
+		String[] tempJ = j.split("");
+		for(int x = 0; x < tempI.length; x++)
+		{
+			if(!tempI[x].equals(tempJ[x]))
+			{
+				differentLetters++;
+			}
+		}
+		if(differentLetters == 1)
+		{return true;}
+		else{return false;}
+	}	
 }

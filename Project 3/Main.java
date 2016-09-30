@@ -19,10 +19,10 @@ import java.io.*;
 
 public class Main {
 	
+	static ArrayList<String> wordLadder;
+	
 	// static variables and constants only here.
 	static ArrayList<String> words;
-	
-	// List of the 26 letters in alphabet
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -40,7 +40,7 @@ public class Main {
 		initialize();
 		words = Main.parse(kb);
 		getWordLadderBFS(words.get(0), words.get(1));
-
+		//getWordLadderDFS(words.get(0), words.get(1));
 
 		// TODO methods to read in words, output ladder
 	}
@@ -49,7 +49,7 @@ public class Main {
 		// initialize your static variables or constants here.
 		// We will call this method before running our JUNIT tests.  So call it 
 		// only once at the start of main.
-		//words = new ArrayList<String>();
+		Main.wordLadder = new ArrayList<String>();
 	}
 	
 	/**
@@ -69,15 +69,42 @@ public class Main {
 		return wordsArray;
 	}
 	
+	/**
+	 * 
+	 * @param start Starting word
+	 * @param end Ending word
+	 * @return Word ladder 
+	 */
 	public static ArrayList<String> getWordLadderDFS(String start, String end) {
 		
 		// Returned list should be ordered start to end.  Include start and end.
 		// Return empty list if no ladder.
 		// TODO some code
 		Set<String> dict = makeDictionary();
-		// TODO more code
+		Set<Node> nodeSet = Node.convertToNodes(dict);
+		NodeMap.createNodeMap(nodeSet);
+		Node[] nodeArray = new Node[] {};
+		nodeArray = nodeSet.toArray(nodeArray);
+		int startIndex = 0; 
 		
-		return null; // replace this line later with real return
+		for (int i = 0; i < nodeArray.length; i++) {
+			if (nodeArray[i].word.equals(start)) {
+				startIndex = i; 
+				break; 
+			}
+		}
+		
+		Node startNode = nodeArray[startIndex];
+		
+		boolean ladderExists = doDFS(startNode, end, nodeArray);
+		
+		if (ladderExists == true) {
+			return Main.wordLadder;
+		}
+		else {
+			Main.wordLadder.clear();
+			return Main.wordLadder;
+		}		
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
@@ -102,7 +129,7 @@ public class Main {
 		queue.add(nodeArrayList.get(startIndex));
 		
 		
-		int printTimes = 1;
+
 		while(queue.size() != 0)
 		{
 			Node head = queue.peek();
@@ -110,6 +137,11 @@ public class Main {
 			if (head.word.equals(end))
 			{
 				path.add(head.word);
+				while(head.parent != null)
+				{
+					path.add(head.parent.word);
+					head = head.parent;
+				}
 				return path;
 			}
 			if(head.isMarked == 2)
@@ -123,29 +155,40 @@ public class Main {
 				{
 					if(head.relatedNodes.get(i).isMarked != 1 && head.relatedNodes.get(i).isMarked != 2)
 					{
-							if(printTimes == 1)
-							path.add(head.word);
-							printTimes = 0;
+							head.relatedNodes.get(i).parent = head;
+							head.relatedNodes.get(i).isMarked = 1;
 							queue.add(head.relatedNodes.get(i));
-							head.relatedNodes.get(i).isMarked = 1;					
 						
 					}
 				}
-				printTimes = 1;
+
 			}
 		}
-		
+
 		
 		// TODO more code
 		path.clear();
 		return path;
 	}
     
+    /**
+     * Clean up the path for BFS elements not connected.
+     * @param path Path to be cleaned
+     */
+    public static void cleanPath(ArrayList<String> path) {
+    	for (int i = 1; i < path.size(); i++) {
+    		if (NodeMap.isStringRelated(path.get(i), path.get(i-1))==false){
+    			path.remove(i-1);
+    			i = 1;
+    		}
+    	}
+    }
+    
 	public static Set<String>  makeDictionary () {
 		Set<String> words = new HashSet<String>();
 		Scanner infile = null;
 		try {
-			infile = new Scanner (new File("short_dict.txt"));
+			infile = new Scanner (new File("five_letter_words.txt"));
 		} catch (FileNotFoundException e) {
 			System.out.println("Dictionary File not Found!");
 			e.printStackTrace();
@@ -162,5 +205,39 @@ public class Main {
 	}
 	// TODO
 	// Other private static methods here
-
+	
+	/**
+	 * 
+	 * @param startNode The starting node
+	 * @param end The string we wish to create a ladder
+	 * @param nodeArray Array of nodes to traverse
+	 * @return Boolean whether a ladder could be made
+	 */
+	private static boolean doDFS(Node startNode, String end, Node[] nodeArray) {
+		if (startNode == null) {
+			return false;
+		}
+		// Mark visited
+		startNode.isMarked = 1;
+		
+		if (startNode.word.equals(end)) {
+			Main.wordLadder.add(startNode.word);
+			return true;
+		} 
+		else {
+			// Add the word to the ladder
+			Main.wordLadder.add(startNode.word);
+			int i;
+			for (i = 0; i < startNode.relatedNodes.size(); i++) {
+				if (startNode.relatedNodes.get(i).isMarked == 0) {
+					boolean found = doDFS(startNode.relatedNodes.get(i), end, nodeArray);
+					if (found == true) {
+						return true;
+					}
+				}				
+			}
+			Main.wordLadder.remove(startNode.relatedNodes.get(i));
+			return false;
+		}
+	}
 }
